@@ -7,10 +7,16 @@ import sqlite3
 
 root = Tk()
 root.title('gestor de clientes')
-root.minsize(width=500, height=500)
+# root.minsize(width=500, height=500)
 
+# aqui definimos el estilo con forest dark
+styleTtk = ttk.Style(root)
+root.tk.call('source', 'forest-dark.tcl')
+styleTtk.theme_use('forest-dark')
+
+# aqui definimos el triangulito para cambiar el tamaño de la ventana
 size = ttk.Sizegrip(root)
-size.grid(row=2, column=1, padx=0, pady=0, sticky='se')
+size.grid(row=2, column=2, padx=0, pady=0, sticky='se')
 
 conn = sqlite3.connect('contac.db')
 c = conn.cursor()
@@ -86,7 +92,7 @@ def newClient():
 def delClient():
 	id = tree.selection()
 	cliente = c.execute("SELECT * FROM cliente WHERE id=? ",(id))
-	respon = messagebox.askokcancel('confirmar','¿Estas seguro que quiere eliminar al cliente?')
+	respon = messagebox.askokcancel('confirmar','¿Estas seguro que quiere eliminar a los clientes seleccionados?')
 
 	if respon == True:
 		c.execute("DELETE FROM cliente WHERE id= ?", (id))
@@ -113,6 +119,11 @@ tree.heading('Telefono', text='Teléfono')
 tree.heading('Empresa', text='Empresa')
 tree.grid(column=0, row=1, columnspan=2, sticky='nswes', padx=15, pady=5)
 
+
+# aqui definimos la barra de scroll para la tabla
+scroll = ttk.Scrollbar(root, orient=VERTICAL, command=tree.yview)
+scroll.grid(column=2, row=1, sticky='ns')
+tree['yscrollcommand'] = scroll.set
 renderClient()
 
 root.rowconfigure(1, weight=1)
